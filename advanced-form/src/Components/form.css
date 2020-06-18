@@ -1,0 +1,7 @@
+.form-container {
+    display: flex;
+    flex-flow: column;
+    align-content: space-around;
+}
+.form-group-inputs {
+}

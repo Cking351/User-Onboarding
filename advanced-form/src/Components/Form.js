@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button } from 'reactstrap'
+import './form.css'
 
 export default function Form(props) {
     const {
@@ -14,22 +15,29 @@ export default function Form(props) {
     return (
         <form className='form-container' onSubmit={onSubmit}>
             <div className='form-group submit'>
-                <h2>Welcome to our app</h2>
-
-                <Button color='primary' disabled={disabled}>Submit</Button>
+                <h2>Register Here!</h2>
                 <div>
-                    <span>{errors.name}</span>
+                    <span>{errors.first_name}</span>
+                    <span>{errors.last_name}</span>
                     <span>{errors.email}</span>
                     <span>{errors.password}</span>
                 </div>
             </div>
             <div className='form-group-inputs'>
                 <h4>Information</h4>
-                <label>Name&nbsp;
+                <label>First Name&nbsp;
                     <input
-                    value={values.name}
+                    value={values.first_name}
                     onChange={onInputChange}
-                    name='name'
+                    name='first_name'
+                    type='text'
+                    />
+                </label>
+                <label>Last Name&nbsp;
+                    <input
+                    value={values.last_name}
+                    onChange={onInputChange}
+                    name='last_name'
                     type='text'
                     />
                 </label>
@@ -41,17 +49,27 @@ export default function Form(props) {
                     type='text'
                     />
                 </label>
-                <label>Terms of Service&nbsp;
+                <label>Password&nbsp;
                     <input
-                    checked={values.terms}
-                    type='checkbox'
-                    onChange={onCheckboxChange}
-                    name='terms'
+                    value={values.password}
+                    onChange={onInputChange}
+                    name='password'
+                    type='password'
                     />
 
                 </label>
+                <label>Terms of Service&nbsp;
+                    <input
+                    checked={values.term}
+                    type='checkbox'
+                    onChange={onCheckboxChange}
+                    name='term'
+                    />
 
+                </label>
             </div>
+           <span><Button variant="contained" color='primary' disabled={disabled}>Submit</Button></span>
+           <br></br>
         </form>
     )
 }

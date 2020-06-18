@@ -1,47 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
+import 'fontsource-roboto';
 import './App.css';
+
 import Form from './Components/Form'
 import formSchema from './Components/formSchema'
 import axios from 'axios'
-import * as yup from 'yup'
+import * as Yup from 'yup'
+import User from './Components/User'
 
 
 const initialFormValues = {
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
   // CHECKBOX //
-  Terms: false
+  term: false
 }
 const initialFormErrors = {
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: ''
 }
 const initialUsers = []
 const initialDisabled = true
 
-function App() {
-  const [users, setUsers] = useState(initialUsers)
-  const [formValues, setFormValues] = useState(initialFormValues)
-  const [formErrors, setFormErrors] = useState(initialFormErrors)
+export default function App() {
+  const [newUsers, setNewUsers] = useState(initialUsers)
+ 	const [formValues, setFormValues] = useState(initialFormValues)
+ 	const [formErrors, setFormErrors] = useState(initialFormErrors)
   const [disabled, setDisabled] = useState(initialDisabled)
 
+  const serverUrl = 'https://reqres.in/api/users'
+   
   const getUser = () => {
-    axios.get(`https://reqres.in/api/users`)
+    axios.get(serverUrl)
     .then(response => {
-      setUsers(response.data)
+      setNewUsers(response.data.data)
+      // console.log(response.data)
     })
     .catch(error => {
       debugger
     })
   }
-
-  const postNewUser = newUser => {
-    axios.post(`https://reqres.in/api/users`, newUser)
+  const postNewUser = props => {
+    axios.post(serverUrl, props)
     .then(response => {
-      setUsers([ ...users, response.data ])
+      setNewUsers([...newUsers, response.data])
     })
     .catch(error => {
       debugger
@@ -50,43 +57,90 @@ function App() {
       setFormValues(initialFormValues)
     })
   }
+  const onInputChange = evt => {
+    // const name = evt.target.name
+    // const value = evt.target.value
+    const { name, value } = evt.target
 
-    /// Event Handler ///
-  const onInputChange = event => {
-    const name = event.target.name
-    const value = event.target.value
-
-    yup
+    Yup
       .reach(formSchema, name)
-      //we can then run validate using the value
+
       .validate(value)
-      // if the validation is successful, we can clear the error message
+
       .then(() => {
         setFormErrors({
           ...formErrors,
           [name]: ""
-        });
+        })
       })
-      /* if the validation is unsuccessful, we can set the error message to the message 
-        returned from yup (that we created in our schema) */
+   
+
       .catch(err => {
-        setErrors({
+        setFormErrors({
           ...formErrors,
-          [name]: err.errors[0]
-        });
-      });
+          [name]: err.errors[0] 
+        })
+      })
 
+    setFormValues({
+      ...formValues,
+      [name]: value 
+    })
   }
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h1>It's a form</h1>
-      </header>
-      <div>
-        {/* <Form /> */}
-      </div>
-    </div>
-  );
-}
 
-export default App;
+  const onCheckboxChange = event => {
+    const {name, checked} = event.target
+    setFormValues({
+      ...formValues, 
+      [name]: checked,
+    })
+  }
+ 
+  const onSubmit = event => {
+    event.preventDefault()
+
+    const newUser = {
+      first_name: formValues.first_name.trim(),
+      last_name: formValues.last_name.trim(),
+      email: formValues.email.trim(),
+      password: formValues.password.trim(),
+    }
+    postNewUser(newUser)
+  }
+
+
+
+  // Time for the useEffect! //
+  useEffect(() => {
+    getUser()
+  }, [])
+
+  useEffect(() => {
+    formSchema.isValid(formValues).then(valid => {
+      setDisabled(!valid)
+    })
+  }, [formValues])
+
+  return(
+  <div maxWidth="sm" className="App">
+        <header className="App-header">
+          <h1>Student Onboarding</h1>
+        </header>
+          <Form
+          values={formValues}
+          onInputChange={onInputChange}
+          onCheckboxChange={onCheckboxChange}
+          onSubmit={onSubmit}
+          disabled={disabled}
+          errors={formErrors}
+          />
+          {
+            newUsers.map(user => {
+              return (
+                <User key={user.id} details={user} />
+              )
+            })
+          }
+  </div>
+  )
+}  

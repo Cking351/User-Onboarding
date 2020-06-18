@@ -1,18 +1,22 @@
-import * as yup from 'yup'
+import * as Yup from 'yup'
 
-const formSchema = yup.object().shape({
-    email: yup
-     .string()
-     .email("Must be a valid email address")
-     .required("Must include email address"),
-    name: yup
-     .string()
-     .min(3, "Name must be at least 3 characters long.")
-     .required("Name is required"),
-    password: yup
-     .string()
-     .min(4, "Password must have at least 4 characters")
-     .required("Password is required")
+const formSchema = Yup.object().shape({
+    first_name: Yup
+    .string()
+    .min(3, "Must be at least 3 characters long")
+    .required("Must include email"),
+    last_name: Yup
+    .string()
+    .min(3, "Must be at least 3 characters long")
+    .required("Must include email"),
+    email: Yup
+    .string()
+    .email("Must be a valid email.")
+    .required("Must include email"),
+    password: Yup
+    .string()
+    .min(6, "Must be at least 6 characters long")
+    .required("Must include password"),
 });
 
 export default formSchema
