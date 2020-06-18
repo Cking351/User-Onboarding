@@ -68,7 +68,7 @@ export default function Form(props) {
 
                 </label>
             </div>
-           <span><Button variant="contained" color='primary' disabled={disabled}>Submit</Button></span>
+           <span><Button id='myBtn' variant="contained" color='primary' disabled={disabled}>Submit</Button></span>
            <br></br>
         </form>
     )
